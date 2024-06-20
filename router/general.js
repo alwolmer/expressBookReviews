@@ -22,49 +22,105 @@ public_users.post("/register", (req,res) => {
   }
 })
 
-// Get the book list available in the shop
-public_users.get('/',function (req, res) {
+const fetchBooks = () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(books);
+    }, 200); // Simulating delay
+  });
+};
 
-  res.status(200).send(JSON.stringify(books, null, 4))
+
+// Get the book list available in the shop
+public_users.get('/', async (req, res) => {
+  try {
+    const retBooks = await fetchBooks()
+    res.status(200).send(JSON.stringify(retBooks, null, 4))
+  } catch (err) {
+    console.error(`Error fetching books: ${err}`)
+    res.status(500).json({message: 'Error fetching books'})
+  }
 });
+
+const fetchBookIsbn = (isbn) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const book = books[isbn] ? books[isbn] : {message: `no book found on database for isbn ${isbn}`}
+      resolve(book);
+    }, 200); // Simulating delay
+  });
+};
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn', async (req, res) => {
   const isbn = parseInt(req.params.isbn)  
 
-  const book = books[isbn] ? books[isbn] : {message: `no book found on database for isbn ${isbn}`}
+  try {
+    const book = await fetchBookIsbn(isbn)
 
   res.status(200).send(JSON.stringify(book))
+  } catch (err) {
+    console.error(`Error fetching book: ${err}`)
+    res.status(500).json({message: 'Error fetching book by isbn'})
+  }
  });
+
+const fetchBookAuthor = (author) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      let filteredBooks = {}
   
+      for (const book in books) {
+        if (books[book].author === author) {
+          filteredBooks[book] = books[book]
+        }
+      }
+
+      resolve(filteredBooks)
+    }, 200); // Simulating delay
+  });
+};
+
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
+public_users.get('/author/:author', async (req, res) => {
   const author = req.params.author
 
-  let filteredBooks = {}
-  
-  for (const book in books) {
-    if (books[book].author === author) {
-      filteredBooks[book] = books[book]
-    }
+  try {
+    const filteredBooks = await fetchBookAuthor(author)
+    res.status(200).send(JSON.stringify(filteredBooks))
+  } catch (err) {
+    console.error(`Error fetching book: ${err}`)
+    res.status(500).json({message: 'Error fetching book by author'})
   }
-
-  res.status(200).send(JSON.stringify(filteredBooks))
 });
 
+const fetchBookTitle = (title) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      let filteredBooks = {}
+  
+      for (const book in books) {
+        if (books[book].title === title) {
+          filteredBooks[book] = books[book]
+        }
+      }
+
+      resolve(filteredBooks)
+    }, 200) // Simulating delay
+  });
+}
+
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get('/title/:title', async (req, res) => {
   const title = req.params.title
 
-  let filteredBooks = {}
-  
-  for (const book in books) {
-    if (books[book].title === title) {
-      filteredBooks[book] = books[book]
-    }
+  try {
+    const filteredBooks = await fetchBookTitle(title)
+    res.status(200).send(JSON.stringify(filteredBooks))
+  } catch (err) {
+    console.error(`Error fetching book: ${err}`)
+    res.status(500).json({message: 'Error fetching book by title'})
   }
-
-  res.status(200).send(JSON.stringify(filteredBooks))
 });
 
 //  Get book review
