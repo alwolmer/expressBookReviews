@@ -4,11 +4,23 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-
 public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
+  const username = req.body.username
+  const password = req.body.password
+
+  if (!username || !password) {
+      return res.status(404).json({message: "Unable to register user (missing parameters)"})
+  } else if (isValid(username)) {
+      return res.status(404).json({message: "User with username already exists"})
+  } else {
+      const newUser = {
+          "username": username,
+          "password": password
+      }
+      users.push(newUser)
+      return res.status(200).json(newUser)
+  }
+})
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
