@@ -37,7 +37,7 @@ regd_users.post("/login", (req,res) => {
           data: password
       }, 'access', {expiresIn: 60 * 60})
 
-      console.log(req.session)
+      // console.log(req.session)
 
       // this is server-side token management, I think
       req.session.authorization = {
@@ -45,7 +45,7 @@ regd_users.post("/login", (req,res) => {
           username
       }
 
-      console.log(req.session)
+      // console.log(req.session)
 
       return res.status(200).json({message: `User ${username} succesfully logged in`})
   }
