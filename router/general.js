@@ -18,7 +18,7 @@ public_users.post("/register", (req,res) => {
           "password": password
       }
       users.push(newUser)
-      return res.status(200).json(newUser)
+      return res.status(200).json({"createdUser": newUser})
   }
 })
 
@@ -131,7 +131,7 @@ public_users.get('/review/:isbn',function (req, res) {
 
   const reviews = book["reviews"]
 
-  res.status(200).send(JSON.stringify(reviews))
+  res.status(200).send(JSON.stringify({reviews}))
 });
 
 module.exports.general = public_users;
